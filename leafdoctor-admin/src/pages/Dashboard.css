@@ -1,0 +1,115 @@
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.stat-card {
+    background-color: #f8f9fb;
+    border-radius: 8px;
+    padding: 16px 18px;
+    border: 0.5px solid #ebebeb;
+}
+
+.stat-label {
+    font-size: 11px;
+    color: #999999;
+    margin-bottom: 6px;
+}
+
+.stat-value {
+    font-size: 26px;
+    font-weight: 500;
+    color: #1a1a2e;
+    line-height: 1;
+}
+
+.stat-value.green {
+    color: #00904a;
+}
+
+.stat-value.red {
+    color: #c62828;
+}
+
+.health-card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 18px 20px;
+    border: 0.5px solid #ebebeb;
+}
+
+.health-card-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: #1a1a2e;
+    margin-bottom: 18px;
+}
+
+.progress-item {
+    margin-bottom: 16px;
+}
+
+.progress-item:last-child {
+    margin-bottom: 0;
+}
+
+.progress-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.progress-label {
+    font-size: 11px;
+    color: #666666;
+}
+
+.progress-count {
+    font-size: 11px;
+    font-weight: 500;
+    color: #999999;
+}
+
+.progress-count.green {
+    color: #2e7d32;
+}
+
+.progress-count.red {
+    color: #c62828;
+}
+
+.progress-bar-bg {
+    height: 5px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 4px;
+}
+
+.progress-bar {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.6s ease;
+}
+
+.progress-bar.green {
+    background-color: #00904a;
+}
+
+.progress-bar.red {
+    background-color: #e53935;
+}
+
+.progress-bar.light-green {
+    background-color: #00904a;
+    opacity: 0.5;
+}
+
+.progress-percent {
+    font-size: 10px;
+    color: #bbbbbb;
+    text-align: right;
+}
