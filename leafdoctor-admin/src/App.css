@@ -225,3 +225,15 @@ button.btn-green {
     font-weight: 500 !important;
     border-radius: 5px !important;
 }
+
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.app-main {
+    flex: 1;
+    margin-left: 220px;
+    min-height: 100vh;
+    background-color: #f8f9fb;
+}
