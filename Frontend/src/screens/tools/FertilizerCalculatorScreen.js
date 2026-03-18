@@ -153,7 +153,7 @@ const FertilizerCalculatorScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#e0f7fa' },
-    contentContainer: { padding: 20, paddingTop: Platform.OS === 'ios' ? 60 : (StatusBar.currentHeight || 24) + 16, paddingBottom: 100 },
+    contentContainer: { padding: 20, paddingTop: Platform.OS === 'ios' ? 60 : (StatusBar.currentHeight || 24) + 16, paddingBottom: 150 },
 
     // ── Back Button ──
     backBtn: {

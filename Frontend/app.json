@@ -20,6 +20,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
+      "softwareKeyboardLayoutMode": "pan",
       "usesCleartextTraffic": true,
       "package": "com.leafdoctor.app",
       "permissions": [

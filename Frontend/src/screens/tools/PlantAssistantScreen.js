@@ -81,7 +81,7 @@ const PlantAssistantScreen = ({ navigation }) => {
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}
             style={styles.container}
-            keyboardVerticalOffset={Platform.OS === 'android' ? -200 : 0}
+            keyboardVerticalOffset={Platform.OS === 'android' ? 0 : 0}
         >
             <LinearGradient colors={['#e0f7fa', '#e8f5e9', '#ffffff']} style={styles.gradientBackground} />
 

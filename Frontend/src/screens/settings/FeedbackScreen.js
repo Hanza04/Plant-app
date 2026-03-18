@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import { useSelector } from 'react-redux';
-import apiClient from '../../api/apiClient';
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '../../config/firebase';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
 const FeedbackScreen = ({ navigation }) => {
     const { t } = useTranslation();
-    const { user, token } = useSelector(state => state.auth);
+    const { user } = useSelector(state => state.auth);
     const [message, setMessage] = useState('');
+    const [rating, setRating] = useState(5);
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async () => {
@@ -19,14 +21,14 @@ const FeedbackScreen = ({ navigation }) => {
 
         setLoading(true);
         try {
-            await apiClient.post('/feedback',
-                {
-                    message: message,
-                    full_name: user?.full_name,
-                    email: user?.email
-                },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            await addDoc(collection(db, 'feedback'), {
+                userId: user?.uid,
+                username: user?.username || user?.email?.split('@')[0],
+                email: user?.email,
+                message: message.trim(),
+                rating: rating,
+                createdAt: new Date().toISOString(),
+            });
             Alert.alert(t('success'), t('thankYouForYourFeedback'));
             navigation.goBack();
         } catch (error) {
@@ -38,41 +40,61 @@ const FeedbackScreen = ({ navigation }) => {
     };
 
     return (
-        <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-            <View style={styles.iconHeader}>
-                <Ionicons name="chatbubbles-outline" size={60} color="#2E7D32" />
-                <Text style={styles.headerTitle}>{t('sendFeedback')}</Text>
-                <Text style={styles.headerSubtitle}>{t('shareThoughtsImproveApp')}</Text>
-            </View>
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            keyboardVerticalOffset={80}
+        >
+            <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+                <View style={styles.iconHeader}>
+                    <Ionicons name="chatbubbles-outline" size={60} color="#2E7D32" />
+                    <Text style={styles.headerTitle}>{t('sendFeedback')}</Text>
+                    <Text style={styles.headerSubtitle}>{t('shareThoughtsImproveApp')}</Text>
+                </View>
 
-            <View style={styles.form}>
-                <Text style={styles.label}>{t('yourMessage')}</Text>
-                <TextInput
-                    style={styles.textArea}
-                    multiline
-                    numberOfLines={6}
-                    placeholder={t('writeYourFeedbackHere')}
-                    textAlignVertical="top"
-                    value={message}
-                    onChangeText={setMessage}
-                />
+                <View style={styles.form}>
+                    <Text style={styles.label}>Rating</Text>
+                    <View style={styles.starsRow}>
+                        {[1, 2, 3, 4, 5].map((star) => (
+                            <TouchableOpacity key={star} onPress={() => setRating(star)}>
+                                <Ionicons
+                                    name={star <= rating ? 'star' : 'star-outline'}
+                                    size={32}
+                                    color="#f4a62a"
+                                    style={{ marginHorizontal: 4 }}
+                                />
+                            </TouchableOpacity>
+                        ))}
+                    </View>
 
-                <TouchableOpacity
-                    style={[styles.submitButton, loading && styles.disabledButton]}
-                    onPress={handleSubmit}
-                    disabled={loading}
-                >
-                    {loading ? (
-                        <ActivityIndicator color="white" />
-                    ) : (
-                        <View style={styles.buttonRow}>
-                            <Ionicons name="send" size={18} color="white" style={{ marginRight: 8 }} />
-                            <Text style={styles.submitButtonText}>{t('submitFeedback')}</Text>
-                        </View>
-                    )}
-                </TouchableOpacity>
-            </View>
-        </ScrollView>
+                    <Text style={styles.label}>{t('yourMessage')}</Text>
+                    <TextInput
+                        style={styles.textArea}
+                        multiline
+                        numberOfLines={6}
+                        placeholder={t('writeYourFeedbackHere')}
+                        textAlignVertical="top"
+                        value={message}
+                        onChangeText={setMessage}
+                    />
+
+                    <TouchableOpacity
+                        style={[styles.submitButton, loading && styles.disabledButton]}
+                        onPress={handleSubmit}
+                        disabled={loading}
+                    >
+                        {loading ? (
+                            <ActivityIndicator color="white" />
+                        ) : (
+                            <View style={styles.buttonRow}>
+                                <Ionicons name="send" size={18} color="white" style={{ marginRight: 8 }} />
+                                <Text style={styles.submitButtonText}>{t('submitFeedback')}</Text>
+                            </View>
+                        )}
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 };
 
@@ -84,6 +106,7 @@ const styles = StyleSheet.create({
     content: {
         padding: 20,
         alignItems: 'center',
+        paddingBottom: 120,
     },
     iconHeader: {
         alignItems: 'center',
@@ -112,6 +135,10 @@ const styles = StyleSheet.create({
         color: '#2E7D32',
         marginBottom: 8,
     },
+    starsRow: {
+        flexDirection: 'row',
+        marginBottom: 20,
+    },
     textArea: {
         borderWidth: 1,
         borderColor: '#ddd',
@@ -127,6 +154,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         alignItems: 'center',
         marginTop: 25,
+        marginBottom: 40,
     },
     disabledButton: {
         backgroundColor: '#81C784',
