@@ -89,23 +89,16 @@
 }
 
 .sidebar-footer {
-    padding: 10px;
+    padding: 12px 10px;
     border-top: 0.5px solid rgba(255, 255, 255, 0.15);
-    position: relative;
 }
 
-.sidebar-profile {
+.sidebar-admin-info {
     display: flex;
     align-items: center;
     gap: 10px;
     padding: 10px;
     border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.15s ease;
-}
-
-.sidebar-profile:hover {
-    background: rgba(255, 255, 255, 0.1);
 }
 
 .sidebar-avatar {
@@ -142,80 +135,4 @@
     color: rgba(255, 255, 255, 0.65);
     text-transform: uppercase;
     letter-spacing: 0.3px;
-}
-
-.sidebar-profile-arrow {
-    font-size: 10px;
-    color: rgba(255, 255, 255, 0.6);
-}
-
-.sidebar-dropdown {
-    position: absolute;
-    bottom: 70px;
-    left: 10px;
-    right: 10px;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    overflow: hidden;
-    z-index: 200;
-}
-
-.sidebar-dropdown-header {
-    padding: 14px 16px;
-    background: #f8f9fb;
-}
-
-.sidebar-dropdown-welcome {
-    font-size: 13px;
-    font-weight: 600;
-    color: #1a1a2e;
-    text-transform: capitalize;
-    margin-bottom: 2px;
-}
-
-.sidebar-dropdown-email {
-    font-size: 11px;
-    color: #999;
-    margin-bottom: 6px;
-}
-
-.sidebar-dropdown-badge {
-    display: inline-block;
-    font-size: 9px;
-    font-weight: 600;
-    padding: 2px 8px;
-    background: #e8f5e9;
-    color: #2e7d32;
-    border-radius: 20px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.sidebar-dropdown-divider {
-    height: 0.5px;
-    background: #f0f0f0;
-}
-
-.sidebar-dropdown-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 11px 16px;
-    font-size: 12px;
-    color: #333;
-    cursor: pointer;
-    transition: background 0.1s ease;
-}
-
-.sidebar-dropdown-item:hover {
-    background: #f8f9fb;
-}
-
-.sidebar-dropdown-item.logout {
-    color: #c62828;
-}
-
-.sidebar-dropdown-item.logout:hover {
-    background: #ffebee;
 }

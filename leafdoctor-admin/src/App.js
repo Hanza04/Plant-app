@@ -11,6 +11,7 @@ import Users from "./pages/Users";
 import Scans from "./pages/Scans";
 import Feedback from "./pages/Feedback";
 import Sidebar from "./components/Sidebar";
+import TopBar from "./components/TopBar";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -48,6 +49,7 @@ function App() {
       <div className={admin ? "app-layout" : ""}>
         {admin && <Sidebar admin={admin} setAdmin={setAdmin} />}
         <div className={admin ? "app-main" : ""}>
+          {admin && <TopBar admin={admin} setAdmin={setAdmin} />}
           <Routes>
             <Route path="/login" element={admin ? <Navigate to="/dashboard" /> : <Login setAdmin={setAdmin} />} />
             <Route path="/dashboard" element={<ProtectedRoute admin={admin}><Dashboard /></ProtectedRoute>} />
