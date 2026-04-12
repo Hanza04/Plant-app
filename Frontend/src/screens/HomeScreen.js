@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { useFocusEffect } from '@react-navigation/native';
+import SeasonalInsightsSection from '../components/SeasonalInsightsSection';
 
 const HomeScreen = ({ navigation }) => {
     const { i18n } = useTranslation();
@@ -206,6 +207,21 @@ const HomeScreen = ({ navigation }) => {
                             </View>
                         )}
                     </View>
+
+                    {/* 🎯 SEASONAL INSIGHTS SECTION - ADD HERE */}
+                    {weather && (
+                        <SeasonalInsightsSection
+                            navigation={navigation}
+                            user={user}
+                            weatherData={{
+                                temperature: weather.temp,
+                                humidity: weather.humidity,
+                                condition: weather.condition,
+                                windSpeed: weather.windSpeed,
+                                city: weather.city
+                            }}
+                        />
+                    )}
 
                     {/* Stats */}
                     <Text style={styles.sectionTitle}>📊 Your Plant Stats</Text>

@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const apiKey = process.env.EXPO_PUBLIC_GROQ_API_KEY;
+console.log('API KEY:', apiKey);
 
 const PlantAssistantScreen = ({ navigation }) => {
     const [messages, setMessages] = useState([
@@ -27,7 +28,7 @@ const PlantAssistantScreen = ({ navigation }) => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${GROQ_API_KEY}`,
+                    'Authorization': `Bearer ${apiKey}`,
                 },
                 body: JSON.stringify({
                     model: 'llama-3.1-8b-instant',
@@ -43,8 +44,7 @@ const PlantAssistantScreen = ({ navigation }) => {
             });
 
             const data = await response.json();
-            //console.log('Groq response:', JSON.stringify(data));
-            const botText = data ? .choices ? .[0] ? .message ? .content ||
+            const botText = data?.choices?.[0]?.message?.content ||
                 'Sorry, I could not get a response. Please try again.';
             const botMsg = { id: (Date.now() + 1).toString(), text: botText, sender: 'bot' };
             setMessages(prev => [...prev, botMsg]);
@@ -56,129 +56,87 @@ const PlantAssistantScreen = ({ navigation }) => {
         }
     };
 
-    const renderItem = ({ item }) => ( <
-        View style = {
-            [styles.messageRow, item.sender === 'user' ? styles.userRow : styles.botRow] } > {
-            item.sender === 'bot' && ( <
-                View style = { styles.botAvatar } >
-                <
-                Ionicons name = "happy-outline"
-                size = { 20 }
-                color = "#2e7d32" / >
-                <
-                /View>
-            )
-        } <
-        View style = {
-            [styles.messageBubble, item.sender === 'user' ? styles.userBubble : styles.botBubble] } >
-        <
-        Text style = {
-            [styles.messageText, item.sender === 'user' ? styles.userMessageText : styles.botMessageText] } > { item.text } <
-        /Text> <
-        /View> {
-            item.sender === 'user' && ( <
-                View style = { styles.userAvatar } >
-                <
-                Ionicons name = "person-outline"
-                size = { 20 }
-                color = "#555" / >
-                <
-                /View>
-            )
-        } <
-        /View>
+    const renderItem = ({ item }) => (
+        <View style={[styles.messageRow, item.sender === 'user' ? styles.userRow : styles.botRow]}>
+            {item.sender === 'bot' && (
+                <View style={styles.botAvatar}>
+                    <Ionicons name="happy-outline" size={20} color="#2e7d32" />
+                </View>
+            )}
+            <View style={[styles.messageBubble, item.sender === 'user' ? styles.userBubble : styles.botBubble]}>
+                <Text style={[styles.messageText, item.sender === 'user' ? styles.userMessageText : styles.botMessageText]}>
+                    {item.text}
+                </Text>
+            </View>
+            {item.sender === 'user' && (
+                <View style={styles.userAvatar}>
+                    <Ionicons name="person-outline" size={20} color="#555" />
+                </View>
+            )}
+        </View>
     );
 
-    return ( <
-        KeyboardAvoidingView behavior = { Platform.OS === 'ios' ? 'padding' : 'padding' }
-        style = { styles.container }
-        keyboardVerticalOffset = { Platform.OS === 'android' ? 0 : 0 } >
-        <
-        LinearGradient colors = {
-            ['#e0f7fa', '#e8f5e9', '#ffffff'] }
-        style = { styles.gradientBackground }
-        />
+    return (
+        <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}
+            style={styles.container}
+            keyboardVerticalOffset={Platform.OS === 'android' ? 0 : 0}>
+            <LinearGradient colors={['#e0f7fa', '#e8f5e9', '#ffffff']} style={styles.gradientBackground} />
 
-        <
-        View style = { styles.header } > {
-            navigation ? .canGoBack() && ( <
-                TouchableOpacity onPress = {
-                    () => navigation.goBack() }
-                style = { styles.backBtn }
-                activeOpacity = { 0.8 } >
-                <
-                Ionicons name = "arrow-back"
-                size = { 20 }
-                color = "#003300" / >
-                <
-                /TouchableOpacity>
-            )
-        }
+            <View style={styles.header}>
+                {navigation?.canGoBack() && (
+                    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn} activeOpacity={0.8}>
+                        <Ionicons name="arrow-back" size={20} color="#003300" />
+                    </TouchableOpacity>
+                )}
+                <View style={styles.headerCenter}>
+                    <View style={styles.aiBadge}>
+                        <Text style={styles.aiBadgeText}>AI ASSISTANT</Text>
+                    </View>
+                    <Text style={styles.headerTitle}>Ask the Expert</Text>
+                </View>
+            </View>
 
-        <
-        View style = { styles.headerCenter } >
-        <
-        View style = { styles.aiBadge } >
-        <
-        Text style = { styles.aiBadgeText } > AI ASSISTANT < /Text> <
-        /View> <
-        Text style = { styles.headerTitle } > Ask the Expert < /Text> <
-        /View> <
-        /View>
+            <FlatList
+                ref={flatListRef}
+                data={messages}
+                renderItem={renderItem}
+                keyExtractor={item => item.id}
+                style={styles.list}
+                contentContainerStyle={styles.listContent}
+                onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
+            />
 
-        <
-        FlatList ref = { flatListRef }
-        data = { messages }
-        renderItem = { renderItem }
-        keyExtractor = { item => item.id }
-        style = { styles.list }
-        contentContainerStyle = { styles.listContent }
-        onContentSizeChange = {
-            () => flatListRef.current ? .scrollToEnd({ animated: true }) }
-        />
+            {loading && (
+                <View style={styles.typingIndicator}>
+                    <ActivityIndicator size="small" color="#2e7d32" />
+                    <Text style={styles.typingText}>AI is thinking...</Text>
+                </View>
+            )}
 
-        {
-            loading && ( <
-                View style = { styles.typingIndicator } >
-                <
-                ActivityIndicator size = "small"
-                color = "#2e7d32" / >
-                <
-                Text style = { styles.typingText } > AI is thinking... < /Text> <
-                /View>
-            )
-        }
-
-        <
-        View style = { styles.inputContainer } >
-        <
-        TextInput style = { styles.input }
-        value = { inputText }
-        onChangeText = { setInputText }
-        placeholder = "Ask about plant diseases..."
-        placeholderTextColor = "#999"
-        multiline /
-        >
-        <
-        TouchableOpacity style = {
-            [styles.sendButton, loading && styles.sendButtonDisabled] }
-        onPress = { sendMessage }
-        disabled = { loading } >
-        <
-        Ionicons name = "send"
-        size = { 20 }
-        color = "#fff" / >
-        <
-        /TouchableOpacity> <
-        /View> <
-        /KeyboardAvoidingView>
+            <View style={styles.inputContainer}>
+                <TextInput
+                    style={styles.input}
+                    value={inputText}
+                    onChangeText={setInputText}
+                    placeholder="Ask about plant diseases..."
+                    placeholderTextColor="#999"
+                    multiline
+                />
+                <TouchableOpacity
+                    style={[styles.sendButton, loading && styles.sendButtonDisabled]}
+                    onPress={sendMessage}
+                    disabled={loading}>
+                    <Ionicons name="send" size={20} color="#fff" />
+                </TouchableOpacity>
+            </View>
+        </KeyboardAvoidingView>
     );
 };
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#f9f9f9' },
     gradientBackground: { position: 'absolute', top: 0, left: 0, right: 0, height: '100%' },
-
     header: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -216,7 +174,6 @@ const styles = StyleSheet.create({
     },
     aiBadgeText: { fontSize: 10, fontWeight: 'bold', color: '#00695c', letterSpacing: 1 },
     headerTitle: { fontSize: 26, fontWeight: '800', color: '#003300' },
-
     list: { flex: 1, paddingHorizontal: 15 },
     listContent: { paddingBottom: 20 },
     messageRow: { flexDirection: 'row', marginBottom: 20, alignItems: 'flex-end' },
