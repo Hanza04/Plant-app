@@ -10,7 +10,7 @@ import { db } from '../config/firebase';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as ImageManipulator from 'expo-image-manipulator';
 const PLANTNET_API_KEY = '2b10lfc7x87QTr8MJ8uiltw9We';
-const apiKey = process.env.GROQ_API_KEY;
+const apiKey = process.env.EXPO_PUBLIC_GROQ_API_KEY;
 
 
 // ── Fallback care tips per plant family / keywords ──────────────

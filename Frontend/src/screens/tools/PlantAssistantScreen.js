@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, Keyboard
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
-const apiKey = process.env.GROQ_API_KEY;  // ✅ reads from .env file safely
+const apiKey = process.env.EXPO_PUBLIC_GROQ_API_KEY;
 
 const PlantAssistantScreen = ({ navigation }) => {
     const [messages, setMessages] = useState([
