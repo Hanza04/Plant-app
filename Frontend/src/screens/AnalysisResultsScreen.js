@@ -9,9 +9,9 @@ import { collection, addDoc } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as ImageManipulator from 'expo-image-manipulator';
-
 const PLANTNET_API_KEY = '2b10lfc7x87QTr8MJ8uiltw9We';
-const GROQ_API_KEY = "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";
+const apiKey = process.env.GROQ_API_KEY;
+
 
 // ── Fallback care tips per plant family / keywords ──────────────
 const getFallbackTips = (plantName, scientificName) => {

@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, Keyboard
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
-const GROQ_API_KEY = "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";
+const apiKey = process.env.GROQ_API_KEY;  // ✅ reads from .env file safely
 
 const PlantAssistantScreen = ({ navigation }) => {
     const [messages, setMessages] = useState([
@@ -13,7 +13,7 @@ const PlantAssistantScreen = ({ navigation }) => {
     const [loading, setLoading] = useState(false);
     const flatListRef = useRef(null);
 
-    const sendMessage = async () => {
+    const sendMessage = async() => {
         if (inputText.trim().length === 0 || loading) return;
 
         const userMsg = { id: Date.now().toString(), text: inputText, sender: 'user' };
@@ -31,8 +31,7 @@ const PlantAssistantScreen = ({ navigation }) => {
                 },
                 body: JSON.stringify({
                     model: 'llama-3.1-8b-instant',
-                    messages: [
-                        {
+                    messages: [{
                             role: 'system',
                             content: 'You are an expert plant doctor and gardening assistant. Answer questions about plants, diseases, and gardening in 2-3 clear sentences. Be helpful and concise.'
                         },
@@ -45,8 +44,8 @@ const PlantAssistantScreen = ({ navigation }) => {
 
             const data = await response.json();
             //console.log('Groq response:', JSON.stringify(data));
-            const botText = data?.choices?.[0]?.message?.content
-                || 'Sorry, I could not get a response. Please try again.';
+            const botText = data ? .choices ? .[0] ? .message ? .content ||
+                'Sorry, I could not get a response. Please try again.';
             const botMsg = { id: (Date.now() + 1).toString(), text: botText, sender: 'bot' };
             setMessages(prev => [...prev, botMsg]);
         } catch (error) {
@@ -57,88 +56,122 @@ const PlantAssistantScreen = ({ navigation }) => {
         }
     };
 
-    const renderItem = ({ item }) => (
-        <View style={[styles.messageRow, item.sender === 'user' ? styles.userRow : styles.botRow]}>
-            {item.sender === 'bot' && (
-                <View style={styles.botAvatar}>
-                    <Ionicons name="happy-outline" size={20} color="#2e7d32" />
-                </View>
-            )}
-            <View style={[styles.messageBubble, item.sender === 'user' ? styles.userBubble : styles.botBubble]}>
-                <Text style={[styles.messageText, item.sender === 'user' ? styles.userMessageText : styles.botMessageText]}>
-                    {item.text}
-                </Text>
-            </View>
-            {item.sender === 'user' && (
-                <View style={styles.userAvatar}>
-                    <Ionicons name="person-outline" size={20} color="#555" />
-                </View>
-            )}
-        </View>
+    const renderItem = ({ item }) => ( <
+        View style = {
+            [styles.messageRow, item.sender === 'user' ? styles.userRow : styles.botRow] } > {
+            item.sender === 'bot' && ( <
+                View style = { styles.botAvatar } >
+                <
+                Ionicons name = "happy-outline"
+                size = { 20 }
+                color = "#2e7d32" / >
+                <
+                /View>
+            )
+        } <
+        View style = {
+            [styles.messageBubble, item.sender === 'user' ? styles.userBubble : styles.botBubble] } >
+        <
+        Text style = {
+            [styles.messageText, item.sender === 'user' ? styles.userMessageText : styles.botMessageText] } > { item.text } <
+        /Text> <
+        /View> {
+            item.sender === 'user' && ( <
+                View style = { styles.userAvatar } >
+                <
+                Ionicons name = "person-outline"
+                size = { 20 }
+                color = "#555" / >
+                <
+                /View>
+            )
+        } <
+        /View>
     );
 
-    return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}
-            style={styles.container}
-            keyboardVerticalOffset={Platform.OS === 'android' ? 0 : 0}
+    return ( <
+        KeyboardAvoidingView behavior = { Platform.OS === 'ios' ? 'padding' : 'padding' }
+        style = { styles.container }
+        keyboardVerticalOffset = { Platform.OS === 'android' ? 0 : 0 } >
+        <
+        LinearGradient colors = {
+            ['#e0f7fa', '#e8f5e9', '#ffffff'] }
+        style = { styles.gradientBackground }
+        />
+
+        <
+        View style = { styles.header } > {
+            navigation ? .canGoBack() && ( <
+                TouchableOpacity onPress = {
+                    () => navigation.goBack() }
+                style = { styles.backBtn }
+                activeOpacity = { 0.8 } >
+                <
+                Ionicons name = "arrow-back"
+                size = { 20 }
+                color = "#003300" / >
+                <
+                /TouchableOpacity>
+            )
+        }
+
+        <
+        View style = { styles.headerCenter } >
+        <
+        View style = { styles.aiBadge } >
+        <
+        Text style = { styles.aiBadgeText } > AI ASSISTANT < /Text> <
+        /View> <
+        Text style = { styles.headerTitle } > Ask the Expert < /Text> <
+        /View> <
+        /View>
+
+        <
+        FlatList ref = { flatListRef }
+        data = { messages }
+        renderItem = { renderItem }
+        keyExtractor = { item => item.id }
+        style = { styles.list }
+        contentContainerStyle = { styles.listContent }
+        onContentSizeChange = {
+            () => flatListRef.current ? .scrollToEnd({ animated: true }) }
+        />
+
+        {
+            loading && ( <
+                View style = { styles.typingIndicator } >
+                <
+                ActivityIndicator size = "small"
+                color = "#2e7d32" / >
+                <
+                Text style = { styles.typingText } > AI is thinking... < /Text> <
+                /View>
+            )
+        }
+
+        <
+        View style = { styles.inputContainer } >
+        <
+        TextInput style = { styles.input }
+        value = { inputText }
+        onChangeText = { setInputText }
+        placeholder = "Ask about plant diseases..."
+        placeholderTextColor = "#999"
+        multiline /
         >
-            <LinearGradient colors={['#e0f7fa', '#e8f5e9', '#ffffff']} style={styles.gradientBackground} />
-
-            <View style={styles.header}>
-                {navigation?.canGoBack() && (
-                    <TouchableOpacity
-                        onPress={() => navigation.goBack()}
-                        style={styles.backBtn}
-                        activeOpacity={0.8}
-                    >
-                        <Ionicons name="arrow-back" size={20} color="#003300" />
-                    </TouchableOpacity>
-                )}
-
-                <View style={styles.headerCenter}>
-                    <View style={styles.aiBadge}>
-                        <Text style={styles.aiBadgeText}>AI ASSISTANT</Text>
-                    </View>
-                    <Text style={styles.headerTitle}>Ask the Expert</Text>
-                </View>
-            </View>
-
-            <FlatList
-                ref={flatListRef}
-                data={messages}
-                renderItem={renderItem}
-                keyExtractor={item => item.id}
-                style={styles.list}
-                contentContainerStyle={styles.listContent}
-                onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
-            />
-
-            {loading && (
-                <View style={styles.typingIndicator}>
-                    <ActivityIndicator size="small" color="#2e7d32" />
-                    <Text style={styles.typingText}>AI is thinking...</Text>
-                </View>
-            )}
-
-            <View style={styles.inputContainer}>
-                <TextInput
-                    style={styles.input}
-                    value={inputText}
-                    onChangeText={setInputText}
-                    placeholder="Ask about plant diseases..."
-                    placeholderTextColor="#999"
-                    multiline
-                />
-                <TouchableOpacity
-                    style={[styles.sendButton, loading && styles.sendButtonDisabled]}
-                    onPress={sendMessage}
-                    disabled={loading}
-                >
-                    <Ionicons name="send" size={20} color="#fff" />
-                </TouchableOpacity>
-            </View>
-        </KeyboardAvoidingView>
+        <
+        TouchableOpacity style = {
+            [styles.sendButton, loading && styles.sendButtonDisabled] }
+        onPress = { sendMessage }
+        disabled = { loading } >
+        <
+        Ionicons name = "send"
+        size = { 20 }
+        color = "#fff" / >
+        <
+        /TouchableOpacity> <
+        /View> <
+        /KeyboardAvoidingView>
     );
 };
 
